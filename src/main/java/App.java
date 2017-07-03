@@ -12,6 +12,7 @@ public class App {
   }, new VelocityTemplateEngine());
 
 
+
     get("/favorite_photos", (request, response) ->
     "<!DOCTYPE html>" +
     "<html>" +
