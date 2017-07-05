@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Map;
 
 import spark.ModelAndView;
 import spark.template.velocity.VelocityTemplateEngine;
@@ -8,26 +9,43 @@ public class App {
   public static void main(String[] args) {
     staticFileLocation("/public");
     get("/hello", (request, response) ->{
-    return new ModelAndView(new HashMap(), "templates/hello.vtl");
+    Map hmp = new HashMap();
+    String username = request.queryParams("username");
+    request.session().attribute("ss", username);
+    hmp.put("username", username);
+    hmp.put("sowmy", "templates/hello.vtl");
+    return new ModelAndView(hmp, "templates/layout.vtl");
+  }, new VelocityTemplateEngine());
+
+    get("/favorite_photos", (request, response) ->{
+      Map hmp = new HashMap();
+      hmp.put("sowmy", "templates/favorite_photos.vtl");
+    return new ModelAndView(hmp, "templates/layout.vtl");
+  }, new VelocityTemplateEngine());
+
+  get("/form", (request, response) -> {
+    Map model = new HashMap();
+    String userNameFromSession = request.session().attribute("ss")
+    model.put("username", userNameFromSession);
+    model.put("sowmy", "templates/form.vtl");
+    return new ModelAndView(model, "templates/layout.vtl");
+  }, new VelocityTemplateEngine());
+
+  get("/greeting_card", (request, response) -> {
+    Map model = new HashMap();
+    model.put("sowmy", "templates/greeting_card.vtl");
+    String sender = request.queryParams("sender");
+    String recipient = request.queryParams("recipient");
+    model.put("sender", sender);
+    model.put("recipient", recipient);
+    return new ModelAndView(model, "templates/layout.vtl");
   }, new VelocityTemplateEngine());
 
 
-
-    get("/favorite_photos", (request, response) ->
-    "<!DOCTYPE html>" +
-    "<html>" +
-    "<head>" +
-      "<title>Hello Dad!</title>" +
-      "<link rel= 'stylesheet'  href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>" +
-      "</head>" +
-      "<body>" +
-      "<h1>Favorite Travelling Photos</h1>" +
-      "<ul>" +
-        "<li><img src= '/images/shane-rounce-205187.jpg' alt='A photo of an animal' /></li>" +
-        "<li><img src='/images/blue-spruce-and-bench.png' alt= 'A photo of a spruce' /></li>" +
-      "</ul>" +
-      "</body>" +
-      "</html>"
-      );
+  get("/", (request, response) -> {
+    Map model = new HashMap();
+    model.put("sowmy", "templates/login_form.vtl");
+    return new ModelAndView(model, "templates/layout.vtl");
+  }, new VelocityTemplateEngine());
   }
 }
